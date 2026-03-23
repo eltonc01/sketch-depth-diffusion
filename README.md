@@ -1,28 +1,18 @@
-# Paper Wireframe Depth
+# Reconstruction of a 3D wireframe from a single line drawing
 
-Public release of sketch-conditioned diffusion for wireframe depth estimation.
+### [Project Page]() | [Paper]() | [Weights](https://huggingface.co/eltoncao/sketch_depth/tree/main) | [Live Demo]()
 
-## What This Reproduces
+[Reconstruction of a 3D wireframe from a single line drawing]()  
+ [Elton Cao](https://)<sup>1</sup>, [Hod Lipson](https://)<sup>1</sup><br>
+ <sup>1</sup>Columbia University
 
-This repository reproduces the paper-core workflow:
-- sketch-conditioned diffusion inference over VAE latents
-- benchmark evaluation under clean, deterministic settings
-- training launch path for the dinov2_vast paper baseline configuration
-
-v1.0 scope excludes the interface stack and broader internal research variants.
-
-## Quickstart (Under 5 Commands)
+## Requirements
 
 ```bash
-cd paper-wireframe-depth
-export PYTHONPATH="$PWD:${PYTHONPATH:-}"
 python -m pip install -r requirements.txt
-python scripts/download_checkpoints.py --extract-dataset --model-variant dinov2_vast
-python -m py_compile sketch_recon/training/train_diffusion.py benchmark/run.py benchmark/eval.py benchmark/dataset.py
-python benchmark/run.py --strict_clean --noise_levels 0.0 --completion_ratios 0.0 --views_subset 6 --max_shapes 2 --num_samples 1 --save_predictions --num_steps 20 --cfg_scale 1.0 --model_variant dinov2_vast --run_name infer_demo_dinov2_vast_steps20_cfg1.0
 ```
 
-## Pretrained Models and Dataset
+## Models Weights and Dataset
 
 - Dataset repo (kept as-is): `eltoncao/wireframe-data`
 - Model repo (organized variants): `eltoncao/sketch_depth`
@@ -33,8 +23,6 @@ If you need a different local layout, pass explicit path overrides to run script
 ## Inference Demo
 
 ```bash
-cd paper-wireframe-depth
-export PYTHONPATH="$PWD:${PYTHONPATH:-}"
 python benchmark/run.py \
 	--strict_clean \
 	--noise_levels 0.0 \
@@ -54,11 +42,9 @@ Default behavior:
 - deterministic output directory naming under `benchmark/results/`
 - predictions written for quick visual checks
 
-## Benchmark Command
+## Run Benchmark
 
 ```bash
-cd paper-wireframe-depth
-export PYTHONPATH="$PWD:${PYTHONPATH:-}"
 python benchmark/run.py \
 	--strict_clean \
 	--noise_levels 0.0 \
@@ -70,19 +56,15 @@ python benchmark/run.py \
 
 This runs a strict-clean paper benchmark preset and resolves checkpoints via the shared checkpoint manifest.
 
-## Training Command
+## Training
 
 ```bash
-cd paper-wireframe-depth
-export PYTHONPATH="$PWD:${PYTHONPATH:-}"
 python sketch_recon/training/train_diffusion.py \
 	--data_mode clean \
 	--use_controlnet \
 	--control_encoder dinov2 \
-	--batch_size 16 \
+	--batch_size 192 \
 	--epochs 100 \
 	--precision bf16-mixed \
 	--model_variant dinov2_vast
 ```
-
-This command uses manifest-resolved VAE/latent-stat paths unless you override them.
