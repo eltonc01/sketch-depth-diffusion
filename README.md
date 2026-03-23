@@ -1,88 +1,32 @@
-# Paper Wireframe Depth
+# Sketch-Depth Diffusion Website (gh-pages)
 
-Public release of sketch-conditioned diffusion for wireframe depth estimation.
+This branch hosts the static GitHub Pages website for Sketch-Depth Diffusion.
 
-## What This Reproduces
+## Contents
+- `index.html`: project page
+- `static/`: CSS/JS/images/videos from the Nerfies-style template
+- `.gitignore`: branch-level ignores
 
-This repository reproduces the paper-core workflow:
-- sketch-conditioned diffusion inference over VAE latents
-- benchmark evaluation under clean, deterministic settings
-- training launch path for the dinov2_vast paper baseline configuration
-
-v1.0 scope excludes the interface stack and broader internal research variants.
-
-## Quickstart (Under 5 Commands)
+## Local preview
+Run from this folder:
 
 ```bash
-cd paper-wireframe-depth
-export PYTHONPATH="$PWD:${PYTHONPATH:-}"
-python -m pip install -r requirements.txt
-python scripts/download_checkpoints.py --extract-dataset --model-variant dinov2_vast
-python -m py_compile sketch_recon/training/train_diffusion.py benchmark/run.py benchmark/eval.py benchmark/dataset.py
-python benchmark/run.py --strict_clean --noise_levels 0.0 --completion_ratios 0.0 --views_subset 6 --max_shapes 2 --num_samples 1 --save_predictions --num_steps 20 --cfg_scale 1.0 --model_variant dinov2_vast --run_name infer_demo_dinov2_vast_steps20_cfg1.0
+python -m http.server 8000
 ```
 
-## Pretrained Models and Dataset
+Open:
+- http://localhost:8000
 
-- Dataset repo (kept as-is): `eltoncao/wireframe-data`
-- Model repo (organized variants): `eltoncao/sketch_depth`
-- Checkpoint manifest used by runners: `sketch_recon/config/checkpoints.json`
+## Update workflow
+1. Replace placeholder text in `index.html`.
+2. Replace media in `static/images` and `static/videos`.
+3. Commit and push to `gh-pages`.
 
-If you need a different local layout, pass explicit path overrides to run scripts or update the manifest.
+## GitHub Pages settings
+In the repo settings:
+- Source: Deploy from a branch
+- Branch: `gh-pages`
+- Folder: `/` (root)
 
-## Inference Demo
-
-```bash
-cd paper-wireframe-depth
-export PYTHONPATH="$PWD:${PYTHONPATH:-}"
-python benchmark/run.py \
-	--strict_clean \
-	--noise_levels 0.0 \
-	--completion_ratios 0.0 \
-	--views_subset 6 \
-	--max_shapes 2 \
-	--num_samples 1 \
-	--save_predictions \
-	--num_steps 20 \
-	--cfg_scale 1.0 \
-	--model_variant dinov2_vast \
-	--run_name infer_demo_dinov2_vast_steps20_cfg1.0
-```
-
-Default behavior:
-- tiny fixed input set (`--max_shapes 2`, `--views_subset 6`)
-- deterministic output directory naming under `benchmark/results/`
-- predictions written for quick visual checks
-
-## Benchmark Command
-
-```bash
-cd paper-wireframe-depth
-export PYTHONPATH="$PWD:${PYTHONPATH:-}"
-python benchmark/run.py \
-	--strict_clean \
-	--noise_levels 0.0 \
-	--completion_ratios 0.0 \
-	--suite difficulty_occlusion \
-	--model_variant dinov2_vast \
-	--run_name paper_eval_dinov2_vast
-```
-
-This runs a strict-clean paper benchmark preset and resolves checkpoints via the shared checkpoint manifest.
-
-## Training Command
-
-```bash
-cd paper-wireframe-depth
-export PYTHONPATH="$PWD:${PYTHONPATH:-}"
-python sketch_recon/training/train_diffusion.py \
-	--data_mode clean \
-	--use_controlnet \
-	--control_encoder dinov2 \
-	--batch_size 16 \
-	--epochs 100 \
-	--precision bf16-mixed \
-	--model_variant dinov2_vast
-```
-
-This command uses manifest-resolved VAE/latent-stat paths unless you override them.
+# Website Template
+Based on [Nerfies](https://github.com/nerfies/nerfies.github.io)!
