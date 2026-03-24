@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.152.0/build/three.module.js",
+        "three/examples/jsm/": "https://unpkg.com/three@0.152.0/examples/jsm/"
+      }
+    }
+  </script>
   <meta charset="utf-8">
   <meta name="description" content="Sketch-Depth Diffusion: single-image sketch to depth and wireframe reconstruction.">
   <meta name="keywords" content="Sketch, Depth, Wireframe, Diffusion, 3D Reconstruction">
@@ -14,13 +22,11 @@
   <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="./static/css/index.css">
-  <link rel="icon" href="./static/images/favicon.svg">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script defer src="./static/js/fontawesome.all.min.js"></script>
   <script src="./static/js/bulma-carousel.min.js"></script>
   <script src="./static/js/bulma-slider.min.js"></script>
-  <script src="./static/js/index.js"></script>
 </head>
 <body>
 
@@ -29,13 +35,15 @@
     <div class="container is-max-desktop">
       <div class="columns is-centered">
         <div class="column has-text-centered">
-          <h1 class="title is-1 publication-title">Sketch-Depth Diffusion</h1>
+          <h1 class="title is-1 publication-title">Reconstruction of a 3D wireframe from a single line drawing</h1>
+         <div class="is-size-5 publication-authors">
+          <span class="author-block"></sup>
+            <a href="https://www.linkedin.com/in/elton-cao/">Elton Cao</a>,
+            <a href="https://hodlipson.com">Hod Lipson</a>
+          </span>
+        </div>
           <div class="is-size-5 publication-authors">
-            <span class="author-block">Elton Cao</span>
-            <span class="author-block">and Collaborators</span>
-          </div>
-          <div class="is-size-5 publication-authors">
-            <span class="author-block">Affiliation Placeholder</span>
+            <span class="author-block">Columbia University, Creative Machines Lab</span>
           </div>
 
           <div class="column has-text-centered">
@@ -47,27 +55,27 @@
                 </a>
               </span>
               <span class="link-block">
-                <a href="#" class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon"><i class="ai ai-arxiv"></i></span>
-                  <span>arXiv (Coming Soon)</span>
-                </a>
-              </span>
-              <span class="link-block">
                 <a href="https://github.com/eltonc01/sketch-depth-diffusion" class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="fab fa-github"></i></span>
                   <span>Code</span>
                 </a>
               </span>
               <span class="link-block">
-                <a href="#" class="external-link button is-normal is-rounded is-dark">
+                <a href="https://huggingface.co/eltoncao/sketch_depth" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-weight-hanging"></i></span>
+                  <span>Weights</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://huggingface.co/eltoncao/wireframe-data" class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="far fa-images"></i></span>
-                  <span>Data (Coming Soon)</span>
+                  <span>Data</span>
                 </a>
               </span>
               <span class="link-block">
                 <a href="#" class="external-link button is-normal is-rounded is-dark">
                   <span class="icon"><i class="fas fa-cube"></i></span>
-                  <span>3D Viewer (Milestone C)</span>
+                  <span>Live Interface (Coming Soon)</span>
                 </a>
               </span>
             </div>
@@ -82,10 +90,10 @@
   <div class="container is-max-desktop">
     <div class="hero-body">
       <video id="teaser" autoplay muted loop playsinline height="100%">
-        <source src="./static/videos/teaser.mp4" type="video/mp4">
+        <source src="./static/videos/teaser.mov" type="video/mp4">
       </video>
       <h2 class="subtitle has-text-centered">
-        Placeholder teaser video. Replace with your project intro clip.
+        Solving the classic problem of 3D line drawing reconstruction by directly interpolating depth.
       </h2>
     </div>
   </div>
@@ -98,8 +106,19 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            This project investigates sketch-to-depth generation and wireframe reconstruction with diffusion-based modeling.
-            The public page is being prepared; this text is a placeholder for the final abstract.
+            The conversion of 2D freehand sketches into 3D models remains a pivotal challenge in computer
+            vision, bridging the gap between human creativity and digital fabrication. Traditional line drawing
+            reconstruction relies on brittle symbolic logic, while modern approaches are constrained by rigid
+            parametric modeling, limiting users to predefined CAD primitives. We propose a generative approach
+            by framing reconstruction as a conditional dense depth estimation task. To achieve this, we implement
+            a Latent Diffusion Model (LDM) with a ControlNet-style conditioning framework to resolve the
+            inherent ambiguities of orthographic projections. To support an iterative “sketch-reconstruct-sketch”
+            workflow, we introduce a graph-based BFS masking strategy to simulate partial depth cues. We train
+            and evaluate our approach using a massive dataset of over one million image-depth pairs derived
+            from the ABC Dataset. Our framework demonstrates robust performance across varying shape
+            complexities, providing a scalable pipeline for converting sparse 2D line drawings into dense 3D
+            representations, effectively allowing users to “draw in 3D” without the rigid constraints of traditional
+            CAD.
           </p>
         </div>
       </div>
@@ -110,22 +129,61 @@
         <h2 class="title is-3">Method Overview</h2>
         <div class="content has-text-justified">
           <p>
-            Add a concise method summary and one pipeline figure here.
+            Our model’s diffusion architecture involves passing the 
+            geometric conditions (x, p, and m) into our conditioning encoder, outputting representations at various resolutions. 
+            These representations are then injected via zero-convolutions into the LDM, which predicts the Gaussian noise added to 
+            the latent space depth maps.
           </p>
         </div>
+        <figure class="image" style="margin-top: 1.5rem;">
+          <img src="./static/images/model-architecture.png" alt="Sketch-Depth Diffusion model architecture">
+        </figure>
       </div>
     </div>
   </div>
 </section>
 
-<section class="hero is-light is-small">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title is-3 has-text-centered">Qualitative Results (Placeholder)</h2>
-      <div id="results-carousel" class="carousel results-carousel">
-        <div class="item"><video autoplay controls muted loop playsinline height="100%"><source src="./static/videos/steve.mp4" type="video/mp4"></video></div>
-        <div class="item"><video autoplay controls muted loop playsinline height="100%"><source src="./static/videos/chair-tp.mp4" type="video/mp4"></video></div>
-        <div class="item"><video autoplay controls muted loop playsinline height="100%"><source src="./static/videos/shiba.mp4" type="video/mp4"></video></div>
+<section class="section is-light" style="background: #f8fafc;">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3 has-text-centered">Qualitative Results</h2>
+    <p class="subtitle has-text-centered" style="margin-top: -0.5rem;">
+      Browse 10 approved samples. Each sample includes input sketch, predicted depth, orbit GIF, and an interactive 3D viewer.
+    </p>
+
+    <div id="sample-tabs" class="buttons is-centered is-flex-wrap-wrap" style="margin-bottom: 1rem;"></div>
+
+    <div class="columns is-multiline">
+      <div class="column is-one-third">
+        <p class="has-text-weight-semibold has-text-centered" style="margin-bottom: 0.4rem;">Input Sketch</p>
+        <figure class="image is-square viewer-panel sample-media-panel">
+          <img id="sample-sketch" alt="Selected sketch">
+        </figure>
+      </div>
+      <div class="column is-one-third">
+        <p class="has-text-weight-semibold has-text-centered" style="margin-bottom: 0.4rem;">Predicted Depth</p>
+        <figure class="image is-square viewer-panel sample-media-panel">
+          <img id="sample-depth" alt="Selected depth map">
+        </figure>
+      </div>
+      <div class="column is-one-third">
+        <p class="has-text-weight-semibold has-text-centered" style="margin-bottom: 0.4rem;">Wireframe Orbit</p>
+        <figure class="image is-square viewer-panel sample-media-panel">
+          <img id="sample-orbit" alt="Selected wireframe orbit animation">
+        </figure>
+      </div>
+      <div class="column is-full">
+        <div class="level is-mobile" style="margin-bottom: 0.4rem;">
+          <div class="level-left">
+            <p class="has-text-weight-semibold">Interactive 3D</p>
+          </div>
+          <div class="level-right">
+            <div class="buttons has-addons">
+              <button id="toggle-wireframe" class="button is-small is-info">Wireframe</button>
+              <button id="toggle-pointcloud" class="button is-small">Point Cloud</button>
+            </div>
+          </div>
+        </div>
+        <div id="three-viewer" class="viewer-panel" style="width: 100%; height: 420px; position: relative;"></div>
       </div>
     </div>
   </div>
@@ -135,10 +193,10 @@
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
     <pre><code>@misc{sketchdepthdiffusion2026,
-  title   = {Sketch-Depth Diffusion},
-  author  = {Cao, Elton and Collaborators},
+  title   = {Reconstruction of a 3D wireframe from a single line drawing},
+  author  = {Cao, Elton and Lipson, Hod},
   year    = {2026},
-  note    = {Project page draft}
+  note    = {in progress}
 }</code></pre>
   </div>
 </section>
@@ -149,16 +207,307 @@
       <div class="column is-8">
         <div class="content">
           <p>
-            This website is based on the Nerfies project page template.
-          </p>
-          <p>
-            Template source: <a href="https://github.com/nerfies/nerfies.github.io">nerfies.github.io</a>.
+            Website Source: <a href="https://github.com/nerfies/nerfies.github.io">nerfies.github.io</a>.
           </p>
         </div>
       </div>
     </div>
   </div>
 </footer>
+
+<script type="module">
+  import * as THREE from 'three';
+  import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+  import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js';
+
+  const sampleDirs = [
+    'shape_00000006__seed_2570609',
+    'shape_00023490__seed_2070725',
+    'shape_00026445__seed_1826923',
+    'shape_00035113__seed_4777217',
+    'shape_00050750__seed_4079829',
+    'shape_00058221__seed_8175102',
+    'shape_00060077__seed_5437169',
+    'shape_00074280__seed_2588324',
+    'shape_00082963__seed_3725662',
+    'shape_00090484__seed_1625243'
+  ];
+
+  const sampleTabs = document.getElementById('sample-tabs');
+  const sketchImg = document.getElementById('sample-sketch');
+  const depthImg = document.getElementById('sample-depth');
+  const orbitImg = document.getElementById('sample-orbit');
+  const viewerHost = document.getElementById('three-viewer');
+  const wireframeBtn = document.getElementById('toggle-wireframe');
+  const pointcloudBtn = document.getElementById('toggle-pointcloud');
+
+  let scene;
+  let renderer;
+  let camera;
+  let controls;
+  let activeGroup = null;
+  let activeMode = 'wireframe';
+  const plyLoader = new PLYLoader();
+
+  function setViewerMessage(text, isError = false) {
+    const existing = document.getElementById('viewer-status-message');
+    if (existing) existing.remove();
+    if (!text) return;
+
+    const box = document.createElement('div');
+    box.id = 'viewer-status-message';
+    box.style.position = 'absolute';
+    box.style.inset = '0';
+    box.style.display = 'flex';
+    box.style.alignItems = 'center';
+    box.style.justifyContent = 'center';
+    box.style.padding = '1rem';
+    box.style.fontSize = '0.95rem';
+    box.style.background = isError ? '#fff5f5' : '#f8fafc';
+    box.style.color = isError ? '#b42318' : '#344054';
+    box.textContent = text;
+    viewerHost.appendChild(box);
+  }
+
+  function getViewerSize() {
+    const rect = viewerHost.getBoundingClientRect();
+    const width = Math.max(Math.floor(rect.width || viewerHost.clientWidth || 960), 320);
+    const height = Math.max(Math.floor(rect.height || viewerHost.clientHeight || 420), 240);
+    return { width, height };
+  }
+
+  function resizeRenderer() {
+    if (!renderer || !camera) return;
+    const { width, height } = getViewerSize();
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height, false);
+  }
+
+  function makeAssetPath(sampleDir, fileName) {
+    return `./static/qualitative/${sampleDir}/${fileName}`;
+  }
+
+  function getVertices(data) {
+    if (Array.isArray(data?.vertices)) return data.vertices;
+    if (Array.isArray(data?.points)) return data.points;
+    return [];
+  }
+
+  function initThree() {
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
+
+    const { width, height } = getViewerSize();
+    camera = new THREE.PerspectiveCamera(45, width / height, 0.001, 1000);
+    camera.position.set(1.8, 1.3, 1.8);
+
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.setSize(width, height, false);
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
+    renderer.domElement.style.display = 'block';
+    viewerHost.appendChild(renderer.domElement);
+
+    controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.enablePan = false;
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+    const dir = new THREE.DirectionalLight(0xffffff, 0.55);
+    dir.position.set(2, 2, 2);
+    scene.add(dir);
+
+    function animate() {
+      controls.update();
+      renderer.render(scene, camera);
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    window.addEventListener('resize', resizeRenderer);
+    if (typeof ResizeObserver !== 'undefined') {
+      const ro = new ResizeObserver(() => resizeRenderer());
+      ro.observe(viewerHost);
+    }
+
+    // Ensure a correct size after first layout pass.
+    requestAnimationFrame(() => resizeRenderer());
+  }
+
+  function centerAndFit(group) {
+    const box = new THREE.Box3().setFromObject(group);
+    if (box.isEmpty()) return;
+
+    const center = new THREE.Vector3();
+    const size = new THREE.Vector3();
+    box.getCenter(center);
+    box.getSize(size);
+    group.position.sub(center);
+
+    const radius = Math.max(size.length() * 0.5, 1e-5);
+    const vFov = THREE.MathUtils.degToRad(camera.fov);
+    const hFov = 2 * Math.atan(Math.tan(vFov / 2) * camera.aspect);
+    const fitDistV = radius / Math.tan(vFov / 2);
+    const fitDistH = radius / Math.tan(hFov / 2);
+    const fitDist = 0.62 * Math.max(fitDistV, fitDistH);
+
+    camera.near = Math.max(fitDist / 1000, 0.001);
+    camera.far = Math.max(fitDist * 50, 10);
+    camera.updateProjectionMatrix();
+
+    camera.position.set(fitDist, fitDist * 0.72, fitDist);
+    controls.target.set(0, 0, 0);
+    controls.minDistance = fitDist * 0.15;
+    controls.maxDistance = fitDist * 5.0;
+    controls.update();
+  }
+
+  function buildWireframeGeometry(data) {
+    const pts = getVertices(data);
+    const edges = data.edges || [];
+    const positions = [];
+    for (const [a, b] of edges) {
+      const pa = pts[a];
+      const pb = pts[b];
+      if (!pa || !pb) continue;
+      positions.push(pa[0], pa[1], pa[2], pb[0], pb[1], pb[2]);
+    }
+    const geom = new THREE.BufferGeometry();
+    geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    const mat = new THREE.LineBasicMaterial({ color: 0x1a1a1a });
+    return new THREE.LineSegments(geom, mat);
+  }
+
+  function buildPointCloudFromPositions(pts) {
+    const positions = [];
+    for (const p of pts) {
+      positions.push(p[0], p[1], p[2]);
+    }
+    const geom = new THREE.BufferGeometry();
+    geom.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    const mat = new THREE.PointsMaterial({ color: 0x1f77b4, size: 0.016, sizeAttenuation: true });
+    return new THREE.Points(geom, mat);
+  }
+
+  function pointsFromPlyGeometry(geometry) {
+    if (!geometry || !geometry.attributes || !geometry.attributes.position) return [];
+    const arr = geometry.attributes.position.array;
+    const pts = [];
+    for (let i = 0; i < arr.length; i += 3) {
+      pts.push([arr[i], arr[i + 1], arr[i + 2]]);
+    }
+    return pts;
+  }
+
+  async function loadSample(sampleDir) {
+    try {
+      setViewerMessage('Loading 3D sample...');
+
+      sketchImg.src = makeAssetPath(sampleDir, '01_sketch_mask.png');
+      depthImg.src = makeAssetPath(sampleDir, '02_depth_map.png');
+      orbitImg.src = makeAssetPath(sampleDir, '04_wireframe_orbit.gif');
+
+      const jsonPath = makeAssetPath(sampleDir, '04_wireframe_render_exact.json');
+      const pointCloudPlyPath = makeAssetPath(sampleDir, '05_point_cloud.ply');
+
+      const [res, pointCloudGeometry] = await Promise.all([
+        fetch(jsonPath),
+        plyLoader.loadAsync(pointCloudPlyPath).catch(() => null)
+      ]);
+      if (!res.ok) {
+        throw new Error(`Could not load ${jsonPath} (HTTP ${res.status})`);
+      }
+      const data = await res.json();
+      const verts = getVertices(data);
+      const edges = Array.isArray(data?.edges) ? data.edges : [];
+      if (!verts.length || !edges.length) {
+        throw new Error(`Geometry missing: vertices=${verts.length}, edges=${edges.length}`);
+      }
+
+      let pointCloudPoints = [];
+      if (pointCloudGeometry) {
+        pointCloudPoints = pointsFromPlyGeometry(pointCloudGeometry);
+      }
+      if (!pointCloudPoints.length) {
+        // Fallback to render vertices if PLY cannot be loaded.
+        pointCloudPoints = verts;
+      }
+
+      if (activeGroup) {
+        scene.remove(activeGroup);
+        activeGroup.traverse((obj) => {
+          if (obj.geometry) obj.geometry.dispose();
+          if (obj.material) {
+            if (Array.isArray(obj.material)) obj.material.forEach((m) => m.dispose());
+            else obj.material.dispose();
+          }
+        });
+      }
+
+      const group = new THREE.Group();
+      group.add(buildWireframeGeometry(data));
+      group.add(buildPointCloudFromPositions(pointCloudPoints));
+      group.children[0].visible = activeMode === 'wireframe';
+      group.children[1].visible = activeMode === 'pointcloud';
+      scene.add(group);
+      activeGroup = group;
+      centerAndFit(group);
+      setViewerMessage(`Loaded ${verts.length} wireframe vertices and ${pointCloudPoints.length} point-cloud points.`);
+      setTimeout(() => setViewerMessage(''), 900);
+    } catch (err) {
+      console.error('Failed to load viewer sample:', err);
+      setViewerMessage(`3D viewer failed to load: ${err.message}`, true);
+    }
+  }
+
+  function setActiveMode(mode) {
+    activeMode = mode;
+    wireframeBtn.classList.toggle('is-info', mode === 'wireframe');
+    pointcloudBtn.classList.toggle('is-info', mode === 'pointcloud');
+
+    if (!activeGroup) return;
+    activeGroup.children[0].visible = mode === 'wireframe';
+    activeGroup.children[1].visible = mode === 'pointcloud';
+  }
+
+  function activateTab(button) {
+    const allButtons = sampleTabs.querySelectorAll('button');
+    allButtons.forEach((b) => b.classList.remove('is-info'));
+    button.classList.add('is-info');
+  }
+
+  function renderTabs() {
+    sampleDirs.forEach((sampleDir, idx) => {
+      const btn = document.createElement('button');
+      btn.className = 'button is-rounded is-small';
+      btn.textContent = `Sample ${idx + 1}`;
+      btn.addEventListener('click', async () => {
+        activateTab(btn);
+        await loadSample(sampleDir);
+      });
+      sampleTabs.appendChild(btn);
+    });
+  }
+
+  wireframeBtn.addEventListener('click', () => setActiveMode('wireframe'));
+  pointcloudBtn.addEventListener('click', () => setActiveMode('pointcloud'));
+
+  try {
+    setViewerMessage('Initializing 3D viewer...');
+    initThree();
+    renderTabs();
+    const first = sampleTabs.querySelector('button');
+    if (first) {
+      activateTab(first);
+      loadSample(sampleDirs[0]);
+    }
+  } catch (err) {
+    console.error('Failed to initialize viewer:', err);
+    setViewerMessage(`3D viewer initialization failed: ${err.message}`, true);
+  }
+</script>
 
 </body>
 </html>
