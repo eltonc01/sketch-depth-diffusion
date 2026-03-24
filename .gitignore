@@ -19,6 +19,7 @@ lightning_logs/
 benchmark/results/
 benchmark/render_cache/
 hg_download*/
+demo_outputs/
 
 # Jupyter
 .ipynb_checkpoints/

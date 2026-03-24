@@ -1,19 +1,27 @@
+# Public repo Python dependencies (interface deps intentionally excluded).
+
+# Core training / inference
 numpy
-pillow
-opencv-python
+scipy
 torch
 torchvision
 pytorch-lightning
-torchmetrics
 timm
 transformers
 scikit-learn
 tqdm
 tensorboard
-huggingface_hub
+opencv-python
+
+# Benchmark / reporting
 pandas
-pytest
-jupyter
-ipykernel
-matplotlib
-seaborn
+
+# Dataset generation / geometry utilities
+noise
+timeout-decorator
+huggingface_hub
+
+# NOTE:
+# OpenCascade bindings are required by dataset_tools and benchmark rendering code,
+# but are installed with conda (not pip) in this project:
+#   conda install -c conda-forge pythonocc-core=7.9.0

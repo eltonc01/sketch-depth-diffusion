@@ -1,8 +1,4 @@
-# code to train the sketch-conditioned denoiser over VAE latents (4x32x32)
-
 import os
-# os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2"
-
 import glob
 import torch
 import torch.nn as nn
@@ -10,7 +6,6 @@ import torch.optim as optim
 from torch.utils.data import DataLoader
 import argparse
 import torch.nn.functional as F
-# from dataset import WireframeDataset
 from sketch_recon.training.data.dataset import OcclusionAwareSequentialDataset
 import multiprocessing as mp
 import itertools
@@ -40,11 +35,6 @@ from sketch_recon.config.checkpoints import resolve_model_variant_paths
 
 NEAR = 3.0
 FAR = 7.0
-
-# python full_train_diffusion.py --devices 4 5 6 --workers 8 --use_controlnet --batch_size 20 --acumulate_grad_batches 3 --control_encoder dinov2
-
-# path for vast: python full_train_diffusion.py --devices 0 1 2 3 --workers 8 --use_controlnet --batch_size 32 --control_encoder dinov2 --accumulate_grad_batches 2 --epochs 200
-
 
 class SketchDenoiserModule(pl.LightningModule):
     def __init__(self, vae: VAE, unet: DenoisingUNet2DConditionModel, latent_stats_path: str,

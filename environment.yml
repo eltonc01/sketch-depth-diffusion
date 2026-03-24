@@ -1,0 +1,10 @@
+name: sketch_recon
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.12
+  - pythonocc-core=7.9.0
+  - pip
+  - pip:
+      - -r requirements.txt
