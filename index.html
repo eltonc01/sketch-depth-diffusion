@@ -152,6 +152,17 @@
 
     <div id="sample-tabs" class="buttons is-centered is-flex-wrap-wrap" style="margin-bottom: 1rem;"></div>
 
+    <div class="sample-metrics-bar" aria-live="polite">
+      <div class="sample-metric-chip">
+        <span class="sample-metric-label">Shape Complexity</span>
+        <span id="sample-complexity" class="sample-metric-value">-</span>
+      </div>
+      <div class="sample-metric-chip">
+        <span class="sample-metric-label">APR</span>
+        <span id="sample-apr" class="sample-metric-value">-</span>
+      </div>
+    </div>
+
     <div class="columns is-multiline">
       <div class="column is-one-third">
         <p class="has-text-weight-semibold has-text-centered" style="margin-bottom: 0.4rem;">Input Sketch</p>
@@ -233,10 +244,25 @@
     'shape_00090484__seed_1625243'
   ];
 
+  const sampleMetrics = {
+    'shape_00090484__seed_1625243': { shape_complexity: 26.0, apr: 0.06362725450901803 },
+    'shape_00050750__seed_4079829': { shape_complexity: 72.0, apr: 0.10815019899636616 },
+    'shape_00023490__seed_2070725': { shape_complexity: 52.0, apr: 0.09524793388429752 },
+    'shape_00035113__seed_4777217': { shape_complexity: 24.0, apr: 0.04932735426008968 },
+    'shape_00082963__seed_3725662': { shape_complexity: 31.0, apr: 0.03702920016927634 },
+    'shape_00000006__seed_2570609': { shape_complexity: 91.0, apr: 0.13852242744063326 },
+    'shape_00058221__seed_8175102': { shape_complexity: 40.0, apr: 0.05143540669856459 },
+    'shape_00074280__seed_2588324': { shape_complexity: 72.0, apr: 0.061522198731501054 },
+    'shape_00026445__seed_1826923': { shape_complexity: 54.0, apr: 0.07759048091224591 },
+    'shape_00060077__seed_5437169': { shape_complexity: 52.0, apr: 0.07874321179208689 }
+  };
+
   const sampleTabs = document.getElementById('sample-tabs');
   const sketchImg = document.getElementById('sample-sketch');
   const depthImg = document.getElementById('sample-depth');
   const orbitImg = document.getElementById('sample-orbit');
+  const sampleComplexityEl = document.getElementById('sample-complexity');
+  const sampleAprEl = document.getElementById('sample-apr');
   const viewerHost = document.getElementById('three-viewer');
   const wireframeBtn = document.getElementById('toggle-wireframe');
   const pointcloudBtn = document.getElementById('toggle-pointcloud');
@@ -286,6 +312,17 @@
 
   function makeAssetPath(sampleDir, fileName) {
     return `./static/qualitative/${sampleDir}/${fileName}`;
+  }
+
+  function updateSampleMetrics(sampleDir) {
+    const metrics = sampleMetrics[sampleDir];
+    if (!metrics) {
+      sampleComplexityEl.textContent = '-';
+      sampleAprEl.textContent = '-';
+      return;
+    }
+    sampleComplexityEl.textContent = Number(metrics.shape_complexity).toFixed(1);
+    sampleAprEl.textContent = Number(metrics.apr).toFixed(3);
   }
 
   function getVertices(data) {
@@ -404,6 +441,7 @@
   async function loadSample(sampleDir) {
     try {
       setViewerMessage('Loading 3D sample...');
+      updateSampleMetrics(sampleDir);
 
       sketchImg.src = makeAssetPath(sampleDir, '01_sketch_mask.png');
       depthImg.src = makeAssetPath(sampleDir, '02_depth_map.png');
