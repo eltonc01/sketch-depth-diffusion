@@ -1,10 +1,10 @@
 # Reconstruction of a 3D wireframe from a single line drawing via generative depth estimation
 
-### [Project Page](https://eltonc01.github.io/sketch-depth-diffusion/) | [Paper]() | [Weights](https://huggingface.co/eltoncao/sketch_depth/tree/main) | [Live Demo]()
+### [Project Page](https://eltonc01.github.io/sketch-depth-diffusion/) | [Paper]() | [Weights](https://huggingface.co/eltoncao/sketch_depth/tree/main) | [Dataset](https://huggingface.co/datasets/eltoncao/wireframe-data/tree/main) | [Live Demo](https://sketch-recon.vercel.app/)
 
-[Reconstruction of a 3D wireframe from a single line drawing]()  
-[Elton Cao](https://)<sup>1</sup>, [Hod Lipson](https://)<sup>1</sup><br>
-<sup>1</sup>Columbia University
+[Reconstruction of a 3D wireframe from a single line drawing via generative depth estimation]()  
+[Elton Cao](https://www.linkedin.com/in/elton-cao/)<sup>1</sup>, [Hod Lipson](https://www.hodlipson.com/)<sup>1</sup><br>
+<sup>1</sup>Columbia University, Creative Machines Lab
 
 <img src="assets/teaser.gif">
 
@@ -34,6 +34,12 @@ conda install -c conda-forge pythonocc-core=7.9.0
 - Dataset repo: `eltoncao/wireframe-data`
 - Model repo: `eltoncao/sketch_depth`
 - Checkpoint manifest used by runners: [sketch_recon/config/checkpoints.json](sketch_recon/config/checkpoints.json)
+
+Auto-detection notes (minimal):
+
+- Inference and benchmark resolve checkpoint paths from `--model_variant` via the manifest above.
+- Benchmark also infers UNet architecture + conditioner settings directly from the loaded checkpoint.
+- Training still uses explicit CLI knobs for architecture/training behavior (while `--model_variant` resolves shared VAE/stats paths).
 
 Download weights & dataset:
 
@@ -82,6 +88,8 @@ python benchmark/run.py \
 
 This runs a strict-clean benchmark preset and resolves checkpoints via the shared checkpoint manifest.
 
+Tip: switch `--model_variant` to evaluate a different published checkpoint set without editing paths manually.
+
 ## Training
 
 ```bash
@@ -94,3 +102,9 @@ python sketch_recon/training/train_diffusion.py \
   --precision bf16-mixed \
   --model_variant dinov2_vast
 ```
+
+## Acknowledgements
+
+Many thanks to [FaceFormer](https://github.com/manycore-research/faceformer) for the CAD to wireframe infra.
+
+This work was supported by the US National Science Foundation (NSF) AI Institute for Dynamical Systems ([DynamicsAI.org](https://DynamicsAI.org)).
