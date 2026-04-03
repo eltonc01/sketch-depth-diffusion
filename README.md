@@ -1,4 +1,4 @@
-# Reconstruction of a 3D wireframe from a single line drawing
+# Reconstruction of a 3D wireframe from a single line drawing via generative depth estimation
 
 ### [Project Page](https://eltonc01.github.io/sketch-depth-diffusion/) | [Paper]() | [Weights](https://huggingface.co/eltoncao/sketch_depth/tree/main) | [Live Demo]()
 
