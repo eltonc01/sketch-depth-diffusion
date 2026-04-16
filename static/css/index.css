@@ -21,6 +21,7 @@ body {
 .teaser .hero-body {
   padding-top: 0;
   padding-bottom: 3rem;
+  overflow: hidden;
 }
 
 .teaser {
@@ -30,11 +31,22 @@ body {
 #teaser {
   display: block;
   width: 100%;
+  aspect-ratio: 16 / 9;
   height: auto;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.08);
+  transform-origin: center;
   border: 0;
   outline: 0;
   box-shadow: none;
   clip-path: inset(1px 1px 1px 1px);
+}
+
+@media screen and (max-width: 768px) {
+  #teaser {
+    transform: scale(1.12);
+  }
 }
 
 
