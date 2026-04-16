@@ -28,16 +28,15 @@ body {
 }
 
 .teaser-video-frame {
+  position: relative;
+  width: 100%;
   overflow: hidden;
 }
 
 #teaser {
   display: block;
   width: 100%;
-  aspect-ratio: 16 / 9;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
+  height: auto;
   transform: scale(1.08);
   transform-origin: center;
   border: 0;
