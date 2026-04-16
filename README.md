@@ -1,10 +1,10 @@
 # Reconstruction of a 3D wireframe from a single line drawing via generative depth estimation
 
-### [Project Page](https://eltonc01.github.io/sketch-depth-diffusion/) | [Paper]() | [Weights](https://huggingface.co/eltoncao/sketch_depth/tree/main) | [Dataset](https://huggingface.co/datasets/eltoncao/wireframe-data/tree/main) | [Live Demo](https://sketch-recon.vercel.app/)
+### [Project Page](https://eltonc01.github.io/sketch-depth-diffusion/) | [Paper](https://arxiv.org/abs/2604.13549) | [Weights](https://huggingface.co/eltoncao/sketch_depth/tree/main) | [Dataset](https://huggingface.co/datasets/eltoncao/wireframe-data/tree/main) | [Live Demo](https://sketch-recon.vercel.app/)
 
-[Reconstruction of a 3D wireframe from a single line drawing via generative depth estimation]()  
+[Reconstruction of a 3D wireframe from a single line drawing via generative depth estimation](https://arxiv.org/abs/2604.13549)
 [Elton Cao](https://www.linkedin.com/in/elton-cao/)<sup>1</sup>, [Hod Lipson](https://www.hodlipson.com/)<sup>1</sup><br>
-<sup>1</sup>Columbia University, Creative Machines Lab
+<sup>1</sup>Creative Machines Lab, Columbia University
 
 <img src="assets/teaser.gif">
 
@@ -107,4 +107,18 @@ python sketch_recon/training/train_diffusion.py \
 
 Many thanks to [FaceFormer](https://github.com/manycore-research/faceformer) for the CAD to wireframe infra.
 
-This work was supported by the US National Science Foundation (NSF) AI Institute for Dynamical Systems ([DynamicsAI.org](https://DynamicsAI.org)).
+This work was supported by the US National Science Foundation (NSF) AI Institute for Dynamical Systems ([DynamicsAI.org](https://DynamicsAI.org)) under grant 2112085.
+
+## Citation
+
+```bibtex
+@misc{cao2026reconstruction3dwireframesingle,
+  title={Reconstruction of a 3D wireframe from a single line drawing via generative depth estimation}, 
+  author={Elton Cao and Hod Lipson},
+  year={2026},
+  eprint={2604.13549},
+  archivePrefix={arXiv},
+  primaryClass={cs.CV},
+  url={https://arxiv.org/abs/2604.13549}, 
+}
+```
