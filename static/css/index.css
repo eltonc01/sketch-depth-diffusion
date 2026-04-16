@@ -21,18 +21,21 @@ body {
 .teaser .hero-body {
   padding-top: 0;
   padding-bottom: 3rem;
-  overflow: hidden;
 }
 
 .teaser {
   font-family: 'Google Sans', sans-serif;
 }
 
+.teaser-video-frame {
+  overflow: hidden;
+}
+
 #teaser {
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
-  height: auto;
+  height: 100%;
   object-fit: cover;
   object-position: center;
   transform: scale(1.08);
