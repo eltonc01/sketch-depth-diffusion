@@ -3,6 +3,7 @@
 ### [Project Page](https://eltonc01.github.io/sketch-depth-diffusion/) | [Paper](https://arxiv.org/abs/2604.13549) | [Weights](https://huggingface.co/eltoncao/sketch_depth/tree/main) | [Dataset](https://huggingface.co/datasets/eltoncao/wireframe-data/tree/main) | [Live Demo](https://sketch-recon.vercel.app/)
 
 [Reconstruction of a 3D wireframe from a single line drawing via generative depth estimation](https://arxiv.org/abs/2604.13549)
+
 [Elton Cao](https://www.linkedin.com/in/elton-cao/)<sup>1</sup>, [Hod Lipson](https://www.hodlipson.com/)<sup>1</sup><br>
 <sup>1</sup>Creative Machines Lab, Columbia University
 
